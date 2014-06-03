@@ -16,7 +16,7 @@
        specific language governing permissions and limitations
        under the License.
 */
-package org.apache.cordova.mediacapture;
+package ch.becompany.cordova.mediacapture;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -237,6 +237,23 @@ public class Capture extends CordovaPlugin {
         if(Build.VERSION.SDK_INT > 7){
             intent.putExtra("android.intent.extra.durationLimit", duration);
         }
+        
+        if(Build.VERSION.SDK_INT == 18){
+            // Camera bug in android 4.3
+            // http://stackoverflow.com/questions/18472953/video-capture-in-android-4-3-using-camera-app-intent
+            String videoName = "capture_" + System.currentTimeMillis();
+            ContentValues value = new ContentValues();
+            value.put(MediaStore.Video.Media.TITLE, "capture_" + System.currentTimeMillis());
+            value.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
+            value.put(MediaStore.Video.Media.DATA, Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM).getAbsolutePath() + "/" + videoName + ".mp4");
+            
+            Uri videoUri = this.cordova.getActivity().getContentResolver()
+                .insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, value);
+            
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
+        }
+        
         this.cordova.startActivityForResult((CordovaPlugin) this, intent, CAPTURE_VIDEO);
     }
 
