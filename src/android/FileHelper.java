@@ -16,7 +16,7 @@
        specific language governing permissions and limitations
        under the License.
  */
-package org.apache.cordova.mediacapture;
+package ch.becompany.cordova.mediacapture;
 
 import android.net.Uri;
 import android.webkit.MimeTypeMap;
